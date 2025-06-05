@@ -175,7 +175,7 @@ Rem_repetidos(NO **Inicio, NO **Fim)
 	
 	p = *Inicio;
 	q = p->dir;
-	while(p!=*Fim){
+	while(p!=NULL){
 		while(q!=NULL){
 			if(q->info == p->info){
 				if(q != *Fim)
