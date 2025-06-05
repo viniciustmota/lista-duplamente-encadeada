@@ -110,6 +110,87 @@ void Rem_Meio(NO *r){
 	free(r);
 }
 
+void Ins_Depois(NO *r, int val){
+	NO *p, *q;
+	
+	p = (NO *)calloc(1, sizeof(NO));
+	
+	q = r->dir;
+	
+	p->info = val;
+	p->dir = q;
+	p->esq = r;
+	
+	r->dir = p;
+	q->esq = p;
+}
+
+void Transf_Fim(NO **Inicio, NO **Fim, NO *r)
+{
+	NO *p, *q;
+	
+	if(r != *Inicio)
+	{
+	p = r->esq;
+	q = r->dir;
+	p->dir = q;
+	q->esq =p;
+	}
+	else{
+		*Inicio = r->dir;
+		(*Inicio)->esq = NULL;
+	}
+	
+	r->dir = NULL;
+	r->esq = *Fim;
+	(*Fim)->dir = r;
+	*Fim = r;
+}
+
+void Transf_Inicio(NO **Inicio, NO **Fim, NO *r)
+{
+	NO *p, *q;
+	
+	if(r != *Fim)
+	{
+	p = r->esq;
+	q = r->dir;
+	p->dir = q;
+	q->esq =p;
+	}
+	else{
+		*Fim = r->esq;
+		(*Fim)->dir = NULL;
+	}
+	
+	r->esq = NULL;
+	r->dir = *Inicio;
+	(*Inicio)->esq = r;
+	*Inicio = r;
+}
+
+Rem_repetidos(NO **Inicio, NO **Fim)
+{
+	NO *p, *q;
+	
+	p = *Inicio;
+	q = p->dir;
+	while(p!=*Fim){
+		while(q!=NULL){
+			if(q->info == p->info){
+				if(q != *Fim)
+					Rem_Meio(q);
+				else
+					Rem_Fim(Inicio, Fim);
+				q = p->dir;
+			}
+			else
+			    q = q->dir;
+		}
+		p = p->dir;
+	}
+}
+
 main(){
 	NO *Inicio, *Fim, *r;
 	int val, op;
@@ -128,10 +209,25 @@ main(){
 		printf("\n5 - Remover no Fim");
 		printf("\n6 - Consultar um Valor");
 		printf("\n7 - Remover um Valor");
+		printf("\n8 - Inserir depois de um valor");
+		printf("\n9 - Transferir valor para o Fim");
+		
+		printf("\n10 - Transferir valor para o Inicio");
+		
+		printf("\n11 - Remover valores repetidos");
+		/*
+		
+		está opção valera nota = 2.5 pontos.
+		
+		vc deve implementar um algoritmo que remova todos os
+		valores que se repetem. Ao terminar, na lista restará
+		apenas um valor de cada.
+		
+		Dica: Use os algoritmos já prontos: Rem_Fim e Rem_Meio
+		
+		*/
 		
 		printf("\n0 - Sair do programa");
-		
-		
 		
 		printf("\nDigite a opcao: ");
 		scanf("%d", &op);
@@ -201,7 +297,66 @@ main(){
 					}
 					system("pause");
 					break;		
-		}
+					
+			case 8: printf("\nDigite o valor a procurar: ");
+					scanf("%d", &val);
+					
+					r = Consulta(Inicio, val);
+					
+					if(r==NULL)
+						printf("\nValor nao existe!\n");
+					else
+					{
+						printf("\nDigite o valor a inserir: ");
+						scanf("%d", &val);
+						if(r == Fim)
+							Ins_Fim(&Inicio, &Fim, val);
+						else
+							Ins_Depois(r, val);
+					}
+					system("pause");
+					break;
+					
+			case 9: printf("\nDigite o valor a transferir: ");
+				scanf("%d", &val);
+				
+				r = Consulta(Inicio, val);
+				
+				if(r==NULL)
+					printf("\nValor nao existe!\n");
+				else
+				{
+					if(r==Fim)
+						printf("\nValor ja eh o ultimo!\n");
+					else
+						Transf_Fim(&Inicio, &Fim, r);	
+				}
+				system("pause");
+				break;
+		
+		case 10: printf("\nDigite o valor a transferir: ");
+				scanf("%d", &val);
+				
+				r = Consulta(Inicio, val);
+				
+				if(r==NULL)
+					printf("\nValor nao existe!\n");
+				else
+				{
+					if(r==Inicio)
+						printf("\nValor ja eh o primeiro!\n");
+					else
+						Transf_Inicio(&Inicio, &Fim, r);	
+				}
+				system("pause");
+				break;
+		
+		case 11: Rem_repetidos(&Inicio, &Fim);
+				 printf("\nLista com as remocoes:\n");
+				 Imprime(Inicio);
+				 system("pause");
+				 break;
+			}
 		
 	}while (op!=0);
 	
